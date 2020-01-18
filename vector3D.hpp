@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include <math.h>
+
 namespace aifg
 {
     // 3-Dimesional vector struct
@@ -44,7 +46,7 @@ namespace aifg
             z += rhs.z;
             return *this;
         }
-        inline Vector3 operator+(Vector3 lhs, const Vector3& rhs)
+        inline friend Vector3 operator+(Vector3 lhs, const Vector3& rhs)
         {
             lhs += rhs;
             return lhs;
@@ -58,7 +60,7 @@ namespace aifg
             z -= rhs.z;
             return *this;
         }
-        inline Vector3 operator-(Vector3 lhs, const Vector3& rhs)
+        inline friend Vector3 operator-(Vector3 lhs, const Vector3& rhs)
         {
             lhs -= rhs;
             return lhs;
@@ -72,12 +74,12 @@ namespace aifg
             z *= rhs;
             return *this;
         }
-        inline Vector3 operator*(Vector3 lhs, const double rhs)
+        inline friend Vector3 operator*(Vector3 lhs, const double rhs)
         {
             lhs *= rhs;
             return lhs;
         }
-        inline Vector3 operator*(const double rhs, Vector3 lhs)
+        inline friend Vector3 operator*(const double lhs, Vector3 rhs)
         {
             rhs *= lhs;
             return rhs;
@@ -91,14 +93,14 @@ namespace aifg
             z /= rhs;
             return *this;
         }
-        inline Vector3 operator/(Vector3 lhs, const double rhs)
+        inline friend Vector3 operator/(Vector3 lhs, const double rhs)
         {
             lhs /= rhs;
             return lhs;
         }
 
         // Dot product
-        inline double operator*(const Vector3& lhs, const Vector3& rhs)
+        inline friend double operator*(const Vector3& lhs, const Vector3& rhs)
         {
             return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
         }
@@ -106,11 +108,11 @@ namespace aifg
         // Equality
         inline bool operator==(const Vector3& rhs)
         {
-            return x == rhs.x && y = rhs.y && z = rhs.z;
+            return x == rhs.x && y == rhs.y && z == rhs.z;
         }
         inline bool operator!=(const Vector3& rhs)
         {
-            return !(*this == rhs) 
+            return !(*this == rhs);
         }
         inline bool isZero()
         {
@@ -143,5 +145,5 @@ namespace aifg
             return (*this - other).norm();
         }
 
-    }
+    };
 };
