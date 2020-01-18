@@ -28,7 +28,7 @@ namespace aifg
     void Kinematic::update(KSteeringOutput steering, double t)
     {
         // Update position and orientation
-        position += velocity * t;
-        orientation += rotation * t;        
+        position += steering.velocity * t;
+        orientation += steering.rotation * t;        
     }
 };
