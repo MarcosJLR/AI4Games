@@ -5,6 +5,8 @@
 #include <string>
 
 #include "position.hpp"
+#include "kinematic.hpp"
+#include "steering.hpp"
 #include "texture.hpp"
 
 using namespace std;
@@ -14,51 +16,76 @@ using namespace aifg;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-void renderKinematic(SDL_Renderer* renderer, Kinematic& object, LTexture& texture)
+SDL_Window* gWindow;
+SDL_Renderer* gRenderer;
+
+void renderKinematic(SDL_Renderer* renderer, Kinematic& object, LTexture& texture, SDL_Rect* clip = NULL)
 {
     int x = round(object.position.x);
     int y = round(object.position.z);
-    texture.render(renderer, x, y);
+    double angle = (object.orientation * 180) / M_PI;
+    texture.render(renderer, x, y, clip, angle, 0.25);
 }
 
-int main()
+bool init()
 {
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
         fprintf(stderr, "SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        return 0;
+        return false;
     }
 
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")){
         fprintf(stderr, "Warning: Linear texture filtering not enabled!\n");
     }
 
-    SDL_Window* window = 
+    gWindow = 
         SDL_CreateWindow("AIFG", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
                          SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
-    if(window == NULL){
+    if(gWindow == NULL){
         fprintf(stderr, "Window could not be created! SDL Error: %s\n", SDL_GetError());
-        return 0;
+        return false;
     }
 
-    SDL_Renderer* renderer = 
-        SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-
-    if(renderer == NULL){
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | 
+                                               SDL_RENDERER_PRESENTVSYNC);
+    if(gRenderer == NULL){
         fprintf(stderr, "Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-        return 0;
+        return false;
     }
 
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
     int imgFlags = IMG_INIT_PNG;
     if( !(IMG_Init(imgFlags) & imgFlags) ){
         fprintf(stderr, "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        return false;
+    }
+
+    return true;
+}
+
+void close()
+{
+    SDL_DestroyRenderer(gRenderer);
+    SDL_DestroyWindow(gWindow);
+    gWindow = NULL;
+    gRenderer = NULL;
+
+    IMG_Quit();
+    SDL_Quit();
+}
+
+int main()
+{
+
+    if(!init()){
+        fprintf(stderr, "Failed to initialize\n");
         return 0;
     }
 
     LTexture dotTexture;
-    if(!dotTexture.loadFromFile(renderer, "img/dot.bmp")){
+    if(!dotTexture.loadFromFile(gRenderer, "img/arrows.png")){
         fprintf(stderr, "Failed to load dot texture!\n");
         return 0;
     }
@@ -68,6 +95,11 @@ int main()
     SDL_Event e;
 
     Kinematic character;
+    Kinematic enemy(Vector3(600, 0, 440), M_PI);
+
+    bool flee = false;
+
+    SDL_Rect clip = {160, 400, 120, 160};
 
     Uint32 startTime = 0;
 
@@ -84,6 +116,9 @@ int main()
                     case SDLK_DOWN: character.velocity += speed * Vector3::Z; break;
                     case SDLK_LEFT: character.velocity -= speed * Vector3::X; break;
                     case SDLK_RIGHT: character.velocity += speed * Vector3::X; break;
+                    case SDLK_q: character.rotation -= (speed * M_PI) / 180; break;
+                    case SDLK_e: character.rotation += (speed * M_PI) / 180; break;
+                    case SDLK_f: flee = true; break;
                 }
             }
 
@@ -93,30 +128,33 @@ int main()
                     case SDLK_DOWN: character.velocity -= speed * Vector3::Z; break;
                     case SDLK_LEFT: character.velocity += speed * Vector3::X; break;
                     case SDLK_RIGHT: character.velocity -= speed * Vector3::X; break;
+                    case SDLK_q: character.rotation += (speed * M_PI) / 180; break;
+                    case SDLK_e: character.rotation -= (speed * M_PI) / 180; break;
+                    case SDLK_f: flee = false; break;
                 }
             }
         }
 
-        SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-        SDL_RenderClear( renderer );
+        if(flee) 
+            SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0x00 );
+        else     
+            SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+        
+        SDL_RenderClear( gRenderer );
 
         character.update(SDL_GetTicks() - startTime);
+        enemy.update(Seek(enemy, character, 0.001, flee).getSteering(), 0.25, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
         
-        renderKinematic(renderer, character, dotTexture);
+        renderKinematic(gRenderer, character, dotTexture, &clip);
+        renderKinematic(gRenderer, enemy, dotTexture, &clip);
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(gRenderer);
     }
 
     dotTexture.free();
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    window = NULL;
-    renderer = NULL;
-
-    IMG_Quit();
-    SDL_Quit();
+    close();
 
     return 0;
 }
