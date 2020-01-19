@@ -23,12 +23,23 @@ namespace aifg
             velocity.normalize();
             velocity *= maxSpeed;
         }
+
+        //orientation = newOrientation(orientation, steering.linear);
     }
 
     void Kinematic::update(KSteeringOutput steering, double t)
     {
         // Update position and orientation
         position += steering.velocity * t;
-        orientation += steering.rotation * t;        
+        // orientation += steering.rotation * t; 
+        orientation = newOrientation(orientation, steering.velocity);
+    }
+
+    double newOrientation(double current, Vector3 velocity)
+    {
+        if (velocity.norm() > 0) {
+            return atan2(-velocity.x, velocity.z) + M_PI/2;
+        }
+        return current;
     }
 };

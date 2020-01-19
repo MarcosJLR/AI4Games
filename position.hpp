@@ -66,4 +66,6 @@ namespace aifg
         // Update kinematic info
         void update(KSteeringOutput steering, double t);
     };
+
+    double newOrientation(double current, Vector3 velocity);
 };
