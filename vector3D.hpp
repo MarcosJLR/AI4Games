@@ -25,7 +25,10 @@ namespace aifg
         // Basis Directions 
         const static Vector3 X;
         const static Vector3 Y;
-        const static Vector3 Z;        
+        const static Vector3 Z;  
+
+        // Null vector
+        const static Vector3 ZEROV;      
 
         // Assignment
         inline Vector3& operator=(const Vector3& other)
