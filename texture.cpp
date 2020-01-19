@@ -57,7 +57,7 @@ void LTexture::free()
 }
 
 void LTexture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip, 
-                      double angle, SDL_Point* center, SDL_RendererFlip flip)
+                      double angle, double scaleFactor, SDL_Point* center, SDL_RendererFlip flip)
 {
     SDL_Rect renderQuad = {x, y, mWidth, mHeight};
 
@@ -65,6 +65,9 @@ void LTexture::render(SDL_Renderer* renderer, int x, int y, SDL_Rect* clip,
         renderQuad.w = clip->w;
         renderQuad.h = clip->h;
     }
+
+    renderQuad.w = round(scaleFactor * renderQuad.w);
+    renderQuad.h = round(scaleFactor * renderQuad.h);
 
     SDL_RenderCopyEx(renderer, mTexture, clip, &renderQuad, angle, center, flip);
 }                    
