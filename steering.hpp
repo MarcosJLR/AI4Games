@@ -70,4 +70,20 @@ namespace aifg
 
         SteeringOutput getSteering(); 
     };
+
+    struct VelocityMatch : Behaviour
+    {
+        Kinematic character;
+        Kinematic target;
+
+        double maxAcceleration;
+
+        double timeToTarget = 0.1;
+
+        VelocityMatch() : character(), target(), maxAcceleration(0) {}
+        VelocityMatch(Kinematic character, Kinematic target, double maxAcc)
+            : character(character), target(target), maxAcceleration(maxAcc) {}
+
+        SteeringOutput getSteering();
+    };
 };

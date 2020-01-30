@@ -80,4 +80,20 @@ namespace aifg
         result.linear = Vector3::ZEROV;
         return result;
     }
+
+    SteeringOutput VelocityMatch::getSteering()
+    {
+        SteeringOutput result;
+
+        result.linear = target.velocity - character.velocity;
+        result.linear /= timeToTarget;
+
+        if(result.linear.norm() > maxAcceleration){
+            result.linear.normalize();
+            result.linear *= maxAcceleration;
+        }
+
+        result.angular = 0;
+        return result;
+    }
 }
