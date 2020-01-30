@@ -13,6 +13,8 @@
 
 namespace aifg
 {
+    const double INF = 1.0/0.0;
+
     struct SteeringOutput
     {
         // Accelerations
