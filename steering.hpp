@@ -100,4 +100,15 @@ namespace aifg
 
         SteeringOutput getSteering();
     };
+
+    struct Face : Align
+    {
+        Kinematic target;
+
+        Face() : Align(), target() {}
+        Face(Kinematic character, Kinematic target, double maxAng, double maxRot, double targetRadius, double slowRadius)
+            : Align(character, target, maxAng, maxRot, targetRadius, slowRadius), target(target) {}
+
+        SteeringOutput getSteering();
+    };
 };

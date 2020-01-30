@@ -114,4 +114,12 @@ namespace aifg
 
         return Seek::getSteering();
     }
+
+    SteeringOutput Face::getSteering()
+    {
+        Vector3 direction = target.position - character.position;
+        Align::target.orientation = newOrientation(target.orientation, direction);
+
+        return Align::getSteering();
+    }
 }
