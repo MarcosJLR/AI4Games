@@ -143,7 +143,10 @@ int main()
         SDL_RenderClear( gRenderer );
 
         character.update(SDL_GetTicks() - startTime);
-        enemy.update(Face(enemy, character, 0.0005, (speed * M_PI) / 720, 0.15, 4).getSteering(), 0.25, 0.1, SDL_GetTicks() - startTime);
+        SteeringOutput pursue = Pursue(enemy, character, 0.001, 1, flee).getSteering();
+        SteeringOutput look = LookWhereYoureGoing(enemy, 0.0005, (speed * M_PI) / 3600, 0.15, 4).getSteering();
+        SteeringOutput steering(pursue.linear, look.angular);
+        enemy.update(steering, 0.25, 0.1, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
         
