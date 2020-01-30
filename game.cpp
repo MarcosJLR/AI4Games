@@ -95,7 +95,7 @@ int main()
     SDL_Event e;
 
     Kinematic character;
-    Kinematic enemy(Vector3(600, 0, 440), M_PI);
+    Kinematic enemy(Vector3(300, 0, 220), M_PI);
 
     bool flee = false;
 
@@ -143,7 +143,7 @@ int main()
         SDL_RenderClear( gRenderer );
 
         character.update(SDL_GetTicks() - startTime);
-        enemy.update(Align(enemy, character, 0.0005, (speed * M_PI) / 180, 0.15, 4).getSteering(), 0.25, 0.1, SDL_GetTicks() - startTime);
+        enemy.update(VelocityMatch(enemy, character, 0.001).getSteering(), 0.25, 0.1, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
         
