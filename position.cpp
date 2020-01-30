@@ -7,13 +7,21 @@ namespace aifg
         // Update position and orientation
         position += velocity * t;
         orientation += rotation * t;
+
+        // Wrapping orientation around (-pi, pi)
+        if(orientation > M_PI)
+            orientation -= 2*M_PI;
     }
 
-    void Kinematic::update(SteeringOutput steering, double maxSpeed, double t)
+    void Kinematic::update(SteeringOutput steering, double maxSpeed, double maxRotation, double t)
     {
         // Update position and orientation
         position += velocity * t;
         orientation += rotation * t;
+
+        // Wrapping orientation around (-pi, pi)
+        if(orientation > M_PI)
+            orientation -= 2*M_PI;
 
         // Update velocity and rotation
         velocity += steering.linear * t;
@@ -26,10 +34,15 @@ namespace aifg
             velocity.normalize();
             velocity *= maxSpeed;
         }
+
+        if(abs(rotation) > maxRotation)
+            rotation = (rotation < 0 ? -1 : 1) * maxRotation;
         
         if(velocity.norm() < EPS)
             velocity = {0,0,0};
 
+        if(abs(rotation) < EPS/2)
+            rotation = 0;
 
         //orientation = newOrientation(orientation, steering.linear);
     }
@@ -48,5 +61,17 @@ namespace aifg
             return atan2(-velocity.x, velocity.z) + M_PI/2;
         }
         return current;
+    }
+
+    double minAngularDifference(double alfa, double beta)
+    {
+        double result = alfa - beta;
+
+        if(result < -M_PI - EPS) 
+            result += 2*M_PI;
+        if(result > M_PI + EPS)
+            result -= 2*M_PI;
+
+        return result;
     }
 };

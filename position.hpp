@@ -65,11 +65,13 @@ namespace aifg
         void update(double t);
 
         // Update the position with steering output
-        void update(SteeringOutput steering, double maxSpeed, double t);
+        void update(SteeringOutput steering, double maxSpeed, double maxRotation, double t);
     
         // Update kinematic info
         void update(KSteeringOutput steering, double t);
     };
 
     double newOrientation(double current, Vector3 velocity);
+
+    double minAngularDifference(double alfa, double beta);
 };
