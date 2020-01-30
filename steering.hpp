@@ -86,4 +86,18 @@ namespace aifg
 
         SteeringOutput getSteering();
     };
+
+    struct Pursue : Seek
+    {
+        Kinematic target;
+        double maxPrediction;
+
+        Pursue() : Seek(), target(), maxPrediction(0) {}
+        Pursue(Kinematic character, Kinematic target, double maxAcc, double maxPred)
+            : Seek(character, target, maxAcc), target(target), maxPrediction(maxPred) {}
+        Pursue(Kinematic character, Kinematic target, double maxAcc, double maxPred, bool evade)
+            : Seek(character, target, maxAcc, evade), target(target), maxPrediction(maxPred) {}
+
+        SteeringOutput getSteering();
+    };
 };

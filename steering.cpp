@@ -96,4 +96,22 @@ namespace aifg
         result.angular = 0;
         return result;
     }
+
+    SteeringOutput Pursue::getSteering()
+    {
+        Vector3 direction = target.position - character.position;
+        double distance = direction.norm();
+
+        double speed = character.velocity.norm();
+        double prediction;
+        
+        if(speed <= distance / maxPrediction)
+            prediction = maxPrediction;
+        else
+            prediction = distance / speed;
+
+        Seek::target.position = target.position + target.velocity * prediction;
+
+        return Seek::getSteering();
+    }
 }
