@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <functional>
+#include <algorithm>
 #include "vector3D.hpp"
 #include "position.hpp"
 
@@ -135,6 +138,48 @@ namespace aifg
                double wanderRate, double wanderOrientation)
             : Seek(character, *(new Kinematic()), maxAcc), wanderOffset(wanderOffset),
               wanderRadius(wanderRadius), wanderRate(wanderRate), wanderOrientation(character.orientation) {}
+
+        SteeringOutput getSteering();
+    };
+
+    struct Separation : Behaviour
+    {
+        Kinematic& character;
+
+        std::vector <std::reference_wrapper<Kinematic>> targets;
+
+        double maxAcceleration;
+        double threshold;
+        double decayCoefficient;
+        bool attract;
+
+        Separation() : character(*(new Kinematic())), targets(), maxAcceleration(0),
+                       threshold(0), decayCoefficient(0), attract(false) {}
+        Separation(Kinematic& character, std::vector<std::reference_wrapper<Kinematic>>& targets, 
+                   double maxAcc, double threshold, double decayCoef)
+            : character(character), targets(targets), maxAcceleration(maxAcc), 
+              threshold(threshold), decayCoefficient(decayCoef) {}
+        Separation(Kinematic& character, std::vector<std::reference_wrapper<Kinematic>>& targets, 
+                   double maxAcc, double threshold, double decayCoef, bool attract)
+            : character(character), targets(targets), maxAcceleration(maxAcc), 
+              threshold(threshold), decayCoefficient(decayCoef), attract(attract) {}
+
+        SteeringOutput getSteering();
+    };
+
+    struct CollisionAvoidance : Behaviour
+    {
+        Kinematic& character;
+        std::vector<std::reference_wrapper<Kinematic>> targets;
+
+        double maxAcceleration;
+        double radius;
+
+        CollisionAvoidance()  
+            : character(*(new Kinematic())), targets(), maxAcceleration(0), radius(0) {}
+        CollisionAvoidance(Kinematic& character, std::vector<std::reference_wrapper<Kinematic>>& targets,
+                           double maxAcc, double radius)
+            : character(character), targets(targets), maxAcceleration(maxAcc), radius(radius) {}
 
         SteeringOutput getSteering();
     };

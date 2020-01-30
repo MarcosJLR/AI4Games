@@ -139,4 +139,74 @@ namespace aifg
 
         return Seek::getSteering();
     }
+
+    SteeringOutput Separation::getSteering()
+    {
+        SteeringOutput result;
+
+        for(Kinematic& target : targets){
+            Vector3 direction = target.position - character.position;
+            double distance = direction.norm();
+
+            if(attract)
+                direction *= -1;
+
+            if(distance < threshold){
+                double strength = std::min(decayCoefficient / (distance * distance), 
+                                      maxAcceleration);
+                direction.normalize();
+                result.linear += strength * direction;
+            }
+        }
+
+        return result;
+    }
+
+    SteeringOutput CollisionAvoidance::getSteering()
+    {
+        SteeringOutput result;
+        double shortestTime = INF;
+
+        double firstMinSeparation;
+        double firstDistance;
+        Vector3 firstRelativePos;
+        Vector3 firstRelativeVel;
+        bool willCollide = false;
+
+        for(Kinematic& target : targets){
+            Vector3 relativePos = character.position - target.position;
+            Vector3 relativeVel = target.velocity - character.velocity;
+            double relativeSpeed = relativeVel.norm();
+            double timeToColission = (relativePos * relativeVel) / 
+                                     (relativeSpeed * relativeSpeed);
+            double distance = relativePos.norm();
+            double minSeparation = distance - relativeSpeed * timeToColission;
+            
+            if(minSeparation > 2 * radius)
+                continue;
+
+            if(timeToColission > 0 and timeToColission < shortestTime){
+                shortestTime = timeToColission;
+                firstMinSeparation = minSeparation;
+                firstDistance = distance;
+                firstRelativePos = relativePos;
+                firstRelativeVel = relativeVel;
+                willCollide = true;
+            }
+        }
+
+        if(!willCollide)
+            return result;
+
+        Vector3 relativePos;
+        if(firstMinSeparation <= 0 or firstDistance < 2 * radius)
+            relativePos = firstRelativePos;
+        else
+            relativePos = firstRelativePos + firstRelativeVel * shortestTime;
+
+        relativePos.normalize();
+        result.linear = relativePos * maxAcceleration;
+        result.angular = 0;
+        return result;
+    }
 }
