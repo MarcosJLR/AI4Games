@@ -49,4 +49,35 @@ namespace aifg
         result.angular = 0;
         return result;
     }
+
+    SteeringOutput Align::getSteering()
+    {
+        SteeringOutput result;
+
+        double rotation = minAngularDifference(target.orientation, character.orientation);
+        double rotationSize = abs(rotation);
+
+        if(rotationSize < targetRadius)
+            return SteeringOutput();
+
+        double targetRotation;
+        if(rotation > slowRadius)
+            targetRotation = maxRotation;
+        else
+            targetRotation = maxRotation * rotationSize / slowRadius;
+
+        targetRotation *= (rotation < 0 ? -1 : 1);
+
+        result.angular = targetRotation - character.rotation;
+        result.angular /= timeToTarget;
+
+        double angularSize = abs(result.angular);
+        if(angularSize > maxAngular){
+            result.angular /= angularSize;
+            result.angular *= maxAngular;
+        } 
+
+        result.linear = Vector3::ZEROV;
+        return result;
+    }
 }

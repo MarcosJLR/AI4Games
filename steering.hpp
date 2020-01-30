@@ -5,7 +5,13 @@
 
 namespace aifg
 {
-    struct Seek
+    // Behaviour Abstract class
+    struct Behaviour
+    {
+        virtual SteeringOutput getSteering() = 0;
+    };
+
+    struct Seek : Behaviour
     {
         Kinematic character;
         Kinematic target;
@@ -23,7 +29,7 @@ namespace aifg
         SteeringOutput getSteering();
     };
 
-    struct Arrive
+    struct Arrive : Behaviour
     {
         Kinematic character;
         Kinematic target;
@@ -42,5 +48,26 @@ namespace aifg
               maxSpeed(maxSpeed), targetRadius(targetRadius), slowRadius(slowRadius) {}
 
         SteeringOutput getSteering();
+    };
+
+    struct Align : Behaviour
+    {
+        Kinematic character;
+        Kinematic target;
+
+        double maxAngular;
+        double maxRotation;
+
+        double targetRadius;
+        double slowRadius;
+
+        double timeToTarget = 0.1;
+
+        Align() : character(), target(), maxAngular(0), maxRotation(0), targetRadius(0), slowRadius(0) {}
+        Align(Kinematic character, Kinematic target, double maxAng, double maxRot, double targetRadius, double slowRadius)
+            : character(character), target(target), maxAngular(maxAng), 
+              maxRotation(maxRot), targetRadius(targetRadius), slowRadius(slowRadius) {}
+
+        SteeringOutput getSteering(); 
     };
 };
