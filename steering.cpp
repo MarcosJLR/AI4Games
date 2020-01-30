@@ -27,7 +27,6 @@ namespace aifg
 
         if(distance < targetRadius)
             return SteeringOutput();
-
         
         if(distance > slowRadius)
             targetSpeed = maxSpeed;
@@ -128,5 +127,16 @@ namespace aifg
         target.orientation = newOrientation(character.orientation, character.velocity);
 
         return Align::getSteering();
+    }
+
+    SteeringOutput Wander::getSteering()
+    {
+        wanderOrientation += randomBinomial() * wanderRate;
+
+        target.position = character.position + wanderOffset * (Vector3(character.orientation));
+
+        target.position += wanderRadius * (Vector3(wanderOrientation));
+
+        return Seek::getSteering();
     }
 }
