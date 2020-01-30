@@ -111,4 +111,13 @@ namespace aifg
 
         SteeringOutput getSteering();
     };
+
+    struct LookWhereYoureGoing : Align
+    {
+        LookWhereYoureGoing() : Align() {}
+        LookWhereYoureGoing(Kinematic character, double maxAng, double maxRot, double targetRadius, double slowRadius)
+            : Align(character, Kinematic(), maxAng, maxRot, targetRadius, slowRadius) {}
+
+        SteeringOutput getSteering();
+    };
 };

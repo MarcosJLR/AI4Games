@@ -118,7 +118,14 @@ namespace aifg
     SteeringOutput Face::getSteering()
     {
         Vector3 direction = target.position - character.position;
-        Align::target.orientation = newOrientation(target.orientation, direction);
+        Align::target.orientation = newOrientation(character.orientation, direction);
+
+        return Align::getSteering();
+    }
+
+    SteeringOutput LookWhereYoureGoing::getSteering()
+    {
+        target.orientation = newOrientation(character.orientation, character.velocity);
 
         return Align::getSteering();
     }
