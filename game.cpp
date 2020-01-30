@@ -107,6 +107,8 @@ int main()
 
     Wander wander = Wander(enemy, 0.001, 100, 150, 1, 0);
     LookWhereYoureGoing look(enemy, 0.0005, (speed * M_PI) / 360, 0.15, 4);
+
+    bool start = false;
     
     while(!quit){
         while(SDL_PollEvent(&e) != 0){
@@ -122,6 +124,7 @@ int main()
                     case SDLK_q: character.rotation -= (speed * M_PI) / 180; break;
                     case SDLK_e: character.rotation += (speed * M_PI) / 180; break;
                     case SDLK_f: flee = true; break;
+                    case SDLK_SPACE: start = true; break;
                 }
             }
 
@@ -138,6 +141,7 @@ int main()
             }
         }
 
+        if(!start) continue;
         if(flee) 
             SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0x00 );
         else     
