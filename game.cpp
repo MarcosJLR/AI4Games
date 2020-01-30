@@ -105,6 +105,9 @@ int main()
 
     double speed = 0.5;
 
+    Wander wander = Wander(enemy, 0.001, 100, 150, 1, 0);
+    LookWhereYoureGoing look(enemy, 0.0005, (speed * M_PI) / 360, 0.15, 4);
+    
     while(!quit){
         while(SDL_PollEvent(&e) != 0){
             if(e.type == SDL_QUIT)
@@ -143,9 +146,8 @@ int main()
         SDL_RenderClear( gRenderer );
 
         character.update(SDL_GetTicks() - startTime);
-        SteeringOutput pursue = Pursue(enemy, character, 0.001, 1, flee).getSteering();
-        SteeringOutput look = LookWhereYoureGoing(enemy, 0.0005, (speed * M_PI) / 3600, 0.15, 4).getSteering();
-        SteeringOutput steering(pursue.linear, look.angular);
+        
+        SteeringOutput steering(wander.getSteering().linear, look.getSteering().angular);
         enemy.update(steering, 0.25, 0.1, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
