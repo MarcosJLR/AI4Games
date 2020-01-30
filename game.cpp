@@ -143,7 +143,7 @@ int main()
         SDL_RenderClear( gRenderer );
 
         character.update(SDL_GetTicks() - startTime);
-        enemy.update(Seek(enemy, character, 0.001, flee).getSteering(), 0.25, SDL_GetTicks() - startTime);
+        enemy.update(Arrive(enemy, character, 0.001, speed/2, 75, 150).getSteering(), 0.25, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
         
