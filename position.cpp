@@ -19,10 +19,17 @@ namespace aifg
         velocity += steering.linear * t;
         rotation += steering.angular * t;
 
+        // Drag
+        velocity -= velocity*drag;
+
         if (velocity.norm() > maxSpeed) {
             velocity.normalize();
             velocity *= maxSpeed;
         }
+        
+        if(velocity.norm() < EPS)
+            velocity = {0,0,0};
+
 
         //orientation = newOrientation(orientation, steering.linear);
     }

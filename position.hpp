@@ -8,6 +8,8 @@
 
 #include "vector3D.hpp"
 
+#define EPS 0.01
+
 namespace aifg
 {
     struct SteeringOutput
@@ -41,6 +43,8 @@ namespace aifg
         // Kinematic info
         Vector3 velocity;
         double rotation;
+
+        const double drag = 0.05;
 
         // Default constructor
         Kinematic() 
