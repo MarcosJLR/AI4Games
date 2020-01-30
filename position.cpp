@@ -74,4 +74,11 @@ namespace aifg
 
         return result;
     }
+
+    double randomBinomial(){
+        double rand1 = rand() / (double) RAND_MAX;
+        double rand2 = rand() / (double) RAND_MAX;
+           
+        return rand1 - rand2;
+    }
 };

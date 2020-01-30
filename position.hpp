@@ -6,6 +6,7 @@
  */
 #pragma once 
 
+#include <random>
 #include "vector3D.hpp"
 
 #define EPS 0.01
@@ -74,4 +75,6 @@ namespace aifg
     double newOrientation(double current, Vector3 velocity);
 
     double minAngularDifference(double alfa, double beta);
+
+    double randomBinomial();
 };
