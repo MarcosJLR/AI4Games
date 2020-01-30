@@ -105,11 +105,17 @@ int main()
 
     double speed = 0.5;
 
-    Wander wander = Wander(enemy, 0.001, 100, 150, 1, 0);
+    vector<reference_wrapper<Kinematic>> targets;
+    targets.push_back(character);
+
+    CollisionAvoidance avoider(enemy, targets, 0.001, 20);
     LookWhereYoureGoing look(enemy, 0.0005, (speed * M_PI) / 360, 0.15, 4);
 
     bool start = false;
     
+    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+    SDL_RenderPresent(gRenderer);
+
     while(!quit){
         while(SDL_PollEvent(&e) != 0){
             if(e.type == SDL_QUIT)
@@ -151,7 +157,7 @@ int main()
 
         character.update(SDL_GetTicks() - startTime);
         
-        SteeringOutput steering(wander.getSteering().linear, look.getSteering().angular);
+        SteeringOutput steering(avoider.getSteering().linear, look.getSteering().angular);
         enemy.update(steering, 0.25, 0.1, SDL_GetTicks() - startTime);
 
         startTime = SDL_GetTicks();
