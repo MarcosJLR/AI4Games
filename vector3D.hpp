@@ -21,6 +21,8 @@ namespace aifg
         Vector3() : x(0), y(0), z(0) {}
         Vector3(const double x, const double y, const double z) 
             : x(x), y(y), z(z) {}
+        Vector3(const double angle)
+            : x(cos(angle)), y(0), z(sin(angle)) {}
 
         // Basis Directions 
         const static Vector3 X;
