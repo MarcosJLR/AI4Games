@@ -209,4 +209,35 @@ namespace aifg
         result.angular = 0;
         return result;
     }
+
+    SteeringOutput ObstacleAvoidance::getSteering()
+    {
+        Vector3 longRay = character.velocity;
+        double orientation = newOrientation(character.orientation, longRay);
+
+        longRay.normalize();
+        longRay *= longLookahead;
+
+        Vector3 whiskerL(orientation + whiskerAngle);
+        Vector3 whiskerR(orientation - whiskerAngle);
+
+        whiskerL *= shortLookahead;
+        whiskerR *= shortLookahead;
+
+        Collision* collision = detector.getCollision(character.position, longRay);
+
+        if(!collision){
+            collision = detector.getCollision(character.position, whiskerL);
+            
+            if(!collision){
+                collision = detector.getCollision(character.position, whiskerR);
+                
+                if(!collision)
+                    return SteeringOutput();
+            }
+        }
+
+        target.position = collision->position + collision->normal * avoidDistance;
+        return Seek::getSteering();
+    }
 }

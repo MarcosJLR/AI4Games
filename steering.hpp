@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "vector3D.hpp"
 #include "position.hpp"
+#include "collision.hpp"
 
 namespace aifg
 {
@@ -183,4 +184,22 @@ namespace aifg
 
         SteeringOutput getSteering();
     };
+
+    struct ObstacleAvoidance : Seek
+    {
+        CollisionDetector& detector;
+        double avoidDistance;
+        double longLookahead;
+        double shortLookahead;
+        double whiskerAngle;
+
+        ObstacleAvoidance(Kinematic& character, CollisionDetector& detector, 
+                          double maxAcc, double avoidDistance, double longLookahead, 
+                          double shortLookahead, double whiskerAngle)
+            : Seek(character, *(new Kinematic()), maxAcc), detector(detector), 
+              avoidDistance(avoidDistance), longLookahead(longLookahead), 
+              shortLookahead(shortLookahead), whiskerAngle(whiskerAngle) {}
+
+        SteeringOutput getSteering();
+    };    
 };
