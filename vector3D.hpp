@@ -150,5 +150,15 @@ namespace aifg
             return (*this - other).norm();
         }
 
+        // 2D cross product (using x and z)
+        inline double cross2D(const Vector3& other)
+        {
+            return x*other.z - z*other.x;
+        }
+
+        inline double orient2D(const Vector3& a, const Vector3& b)
+        {
+            return (a - (*this)).cross2D(b - (*this));
+        }
     };
 };
