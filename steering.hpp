@@ -119,7 +119,7 @@ namespace aifg
     struct LookWhereYoureGoing : Align
     {
         LookWhereYoureGoing() : Align() {}
-        LookWhereYoureGoing(Kinematic& character, double maxAng, double maxRot, double targetRadius, double slowRadius)
+        LookWhereYoureGoing(Kinematic& character, double maxAng, double maxRot, double targetRadius = 0.05, double slowRadius = 0.5)
             : Align(character, *(new Kinematic()), maxAng, maxRot, targetRadius, slowRadius) {}
 
         SteeringOutput getSteering();

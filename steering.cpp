@@ -59,11 +59,12 @@ namespace aifg
         if(rotationSize < targetRadius)
             return SteeringOutput();
 
+
         double targetRotation;
-        if(rotation > slowRadius)
+        if(rotationSize > slowRadius)
             targetRotation = maxRotation;
         else
-            targetRotation = maxRotation * rotationSize / slowRadius;
+            targetRotation = (maxRotation * rotationSize) / slowRadius;
 
         targetRotation *= (rotation < 0 ? -1 : 1);
 
