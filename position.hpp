@@ -24,6 +24,63 @@ namespace aifg
         SteeringOutput() : linear(), angular(0) {}
         SteeringOutput(const Vector3& linear, double angular = 0) 
             : linear(linear), angular(angular) {}
+
+        // Addition
+        inline SteeringOutput& operator+=(const SteeringOutput& rhs)
+        {
+            linear += rhs.linear;
+            angular += rhs.angular;
+            return *this;
+        }
+        inline friend SteeringOutput operator+(SteeringOutput lhs, const SteeringOutput& rhs)
+        {
+            lhs += rhs;
+            return lhs;
+        }
+
+        // Substraction
+        inline SteeringOutput& operator-=(const SteeringOutput& rhs)
+        {
+            linear -= rhs.linear;
+            angular -= rhs.angular;
+            return *this;
+        }
+        inline friend SteeringOutput operator-(SteeringOutput lhs, const SteeringOutput& rhs)
+        {
+            lhs -= rhs;
+            return lhs;
+        }
+
+        // Multiplication by a scalar
+        inline SteeringOutput& operator*=(const double rhs)
+        {
+            linear *= rhs;
+            angular *= rhs;
+            return *this;
+        }
+        inline friend SteeringOutput operator*(SteeringOutput lhs, const double rhs)
+        {
+            lhs *= rhs;
+            return lhs;
+        }
+        inline friend SteeringOutput operator*(const double lhs, SteeringOutput rhs)
+        {
+            rhs *= lhs;
+            return rhs;
+        }
+
+        // Division by a scalar
+        inline SteeringOutput& operator/=(const double rhs)
+        {
+            linear /= rhs;
+            angular /= rhs;
+            return *this;
+        }
+        inline friend SteeringOutput operator/(SteeringOutput lhs, const double rhs)
+        {
+            lhs /= rhs;
+            return lhs;
+        }
     };
     
     struct KSteeringOutput
