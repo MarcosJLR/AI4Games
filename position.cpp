@@ -9,8 +9,11 @@ namespace aifg
         orientation += rotation * t;
 
         // Wrapping orientation around (-pi, pi)
-        if(orientation > M_PI)
+        while(orientation > M_PI)
             orientation -= 2*M_PI;
+        while(orientation < -M_PI)
+            orientation += 2*M_PI;
+
     }
 
     void Kinematic::update(SteeringOutput steering, double maxSpeed, double maxRotation, double t)
@@ -20,8 +23,11 @@ namespace aifg
         orientation += rotation * t;
 
         // Wrapping orientation around (-pi, pi)
-        if(orientation > M_PI)
+        while(orientation > M_PI)
             orientation -= 2*M_PI;
+        while(orientation < -M_PI)
+            orientation += 2*M_PI;
+
 
         // Update velocity and rotation
         velocity += steering.linear * t;
@@ -38,14 +44,6 @@ namespace aifg
 
         if(abs(rotation) > maxRotation)
             rotation = (rotation < 0 ? -1 : 1) * maxRotation;
-        
-        if(velocity.norm() < EPS)
-            velocity = {0,0,0};
-
-        if(abs(rotation) < EPS/2)
-            rotation = 0;
-
-        //orientation = newOrientation(orientation, steering.linear);
     }
 
     void Kinematic::update(KSteeringOutput steering, double t)
@@ -68,9 +66,9 @@ namespace aifg
     {
         double result = alfa - beta;
 
-        if(result < -M_PI - EPS) 
+        if(result < -M_PI) 
             result += 2*M_PI;
-        if(result > M_PI + EPS)
+        if(result > M_PI)
             result -= 2*M_PI;
 
         return result;
