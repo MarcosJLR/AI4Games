@@ -201,5 +201,45 @@ namespace aifg
               shortLookahead(shortLookahead), whiskerAngle(whiskerAngle) {}
 
         SteeringOutput getSteering();
-    };    
+    };
+
+    struct BlendedSteering : Behaviour
+    {
+        struct BehaviourAndWeight
+        {
+            Behaviour& behaviour;
+            double weight;
+
+            BehaviourAndWeight(Behaviour& behaviour, double weight)
+                : behaviour(behaviour), weight(weight) {}
+        };
+
+        std::vector<BehaviourAndWeight> behaviours;
+        double maxAcceleration;
+        double maxRotation;
+
+        BlendedSteering(double maxAcceleration, double maxRotation)
+            : behaviours(), maxAcceleration(maxAcceleration), maxRotation(maxRotation) {}
+
+        inline void addBehaviour(Behaviour& behaviour, double weight)
+        {
+            behaviours.push_back(BehaviourAndWeight(behaviour, weight));
+        }
+
+        SteeringOutput getSteering();
+    };
+
+    struct PrioritySteering : Behaviour
+    {
+        std::vector<std::reference_wrapper<BlendedSteering>> groups;
+
+        PrioritySteering() : groups() {}
+
+        inline void addGroup(BlendedSteering& group)
+        {
+            groups.push_back(group);
+        }
+
+        SteeringOutput getSteering();  
+    };
 };

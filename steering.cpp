@@ -240,4 +240,35 @@ namespace aifg
         target.position = collision->position + collision->normal * avoidDistance;
         return Seek::getSteering();
     }
+
+    SteeringOutput BlendedSteering::getSteering()
+    {
+        SteeringOutput result;
+
+        for(BehaviourAndWeight& b : behaviours)
+            result += b.weight * b.behaviour.getSteering();
+
+        if(result.linear.norm() > maxAcceleration){
+            result.linear.normalize();
+            result.linear *= maxAcceleration;
+        }
+        if(abs(result.angular) > maxRotation)
+            result.angular = (result.angular < 0) ? -maxRotation : maxRotation; 
+        
+        return result;
+    }
+
+    SteeringOutput PrioritySteering::getSteering()
+    {
+        SteeringOutput result;
+
+        for(BlendedSteering& group : groups){
+            result = group.getSteering();
+
+            if(result.linear.norm() > EPS or abs(result.angular) > EPS)
+                return result; 
+        }
+
+        return result;
+    }
 }
