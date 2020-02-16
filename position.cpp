@@ -28,7 +28,8 @@ namespace aifg
         rotation += steering.angular * t;
 
         // Drag
-        velocity -= velocity*drag;
+        velocity *= drag;
+        rotation *= drag;
 
         if (velocity.norm() > maxSpeed) {
             velocity.normalize();

@@ -104,7 +104,7 @@ namespace aifg
         Vector3 velocity;
         double rotation;
 
-        const double drag = 0.05;
+        const double drag = 0.95;
 
         // Default constructor
         Kinematic() 
