@@ -18,21 +18,34 @@ namespace aifg
         kinematic.update(behaviour->getSteering() + userSteering, maxSpeed, maxRotation, t);
     }
 
-    void Player::init(LTexture& mSprite)
+    void Player::init(const Vector3& pos, LTexture& mSprite)
     {
+        kinematic.position = pos;
+        // sprite.loadFromFile(renderer, "img/Player.png");
+        sprite = mSprite;
         maxSpeed = 0.5;
         maxRotation = (0.5 * M_PI) / 360;
-        sprite = mSprite;
-        behaviour = new LookWhereYoureGoing(kinematic, maxAngular, maxRotation);
+        behaviour = new LookWhereYoureGoing(&kinematic, maxAngular, maxRotation);
     }
 
-    void RedEnemy::init(Kinematic& player, LTexture& mSprite)
+    void RedEnemy::init(const Vector3& pos, Kinematic* player, LTexture& mSprite, std::vector<Kinematic*>& enemies, CollisionDetector& detector)
     {
+        kinematic.position = pos;
+        // sprite.loadFromFile(renderer, "img/RedEnemy.png");        
+
         maxSpeed = 0.25;
-        maxRotation = 0.5 * M_PI;
+        maxRotation = (0.5 * M_PI) / 360;
+        behaviour = new BlendedSteering(maxAcceleration, maxAngular);
         sprite = mSprite;
-        behaviour = new Pursue(kinematic, player, maxAcceleration, 1);
+        BlendedSteering* blendBehaviour = (BlendedSteering*) behaviour;
+        PrioritySteering* pBehaviours = new PrioritySteering();
 
+        pBehaviours->addBehaviour(new ObstacleAvoidance(&kinematic, detector, 100*maxAcceleration, 30, 50, 20, M_PI / 4), 100*maxAcceleration, maxAngular);
+        pBehaviours->addBehaviour(new CollisionAvoidance(&kinematic, enemies, maxAcceleration, 30), 2*maxAcceleration, maxAngular);
+        pBehaviours->addBehaviour(new Pursue(&kinematic, player, maxAcceleration, 1), maxAcceleration, maxAngular);
+        blendBehaviour->addBehaviour(new LookWhereYoureGoing(&kinematic, maxAngular, maxRotation), 1);
+        blendBehaviour->addBehaviour(pBehaviours, 1);
 
+        enemies.push_back(&kinematic);
     }
 };

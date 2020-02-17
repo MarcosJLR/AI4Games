@@ -24,12 +24,12 @@ namespace aifg
     {
         SteeringOutput userSteering;
 
-        void init(LTexture& mSprite);
+        void init(const Vector3& pos, LTexture& mSprite);
         void update(double t);
     };
 
     struct RedEnemy : Character
     {
-        void init(Kinematic& player, LTexture& mSprite);
+        void init(const Vector3& pos, Kinematic* player, LTexture& mSprite, std::vector<Kinematic*>& enemies, CollisionDetector& detector);
     };
 };
