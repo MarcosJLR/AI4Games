@@ -9,7 +9,7 @@
 #include <random>
 #include "vector3D.hpp"
 
-#define EPS 0.01
+#define EPS 0.00001
 
 namespace aifg
 {
