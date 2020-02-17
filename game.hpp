@@ -29,6 +29,9 @@ namespace aifg
         int timer = 0;
 
         Player player;
-        RedEnemy enemy;
+        std::vector<RedEnemy*> enemies;
+        std::vector<Kinematic*> enemiesKin;
+
+        CollisionDetector detector;
     };
 };

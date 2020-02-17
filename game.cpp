@@ -51,8 +51,17 @@ namespace aifg
             return;
         }
 
-        player.init(playerTexture);
-        enemy.init(player.kinematic, enemyTexture);
+        detector.add(Segment({0,0,960}, {0,0,0}));
+        detector.add(Segment({1280,0,960}, {0,0,960}));
+        detector.add(Segment({1280,0,0}, {1280,0,960}));
+        detector.add(Segment({0,0,0}, {1280,0,0}));
+
+        player.init({0, 0, 0}, playerTexture);
+
+        for(int i = 100; i < 1200; i += 100){
+            enemies.push_back(new RedEnemy());
+            enemies.back()->init({ (double) i, 0, 400}, &player.kinematic, enemyTexture, enemiesKin, detector);
+        }
 
         isRunning = true;
     } 
@@ -119,7 +128,9 @@ namespace aifg
         timer = SDL_GetTicks();
 
         player.update(deltaTime);
-        enemy.update(deltaTime);
+        
+        for(RedEnemy* enemy : enemies)
+            enemy->update(deltaTime);
     }
 
     void Game::render()
@@ -128,7 +139,9 @@ namespace aifg
         SDL_RenderClear(renderer);
 
         player.draw(renderer);
-        enemy.draw(renderer);
+
+        for(RedEnemy* enemy : enemies)
+            enemy->draw(renderer);
 
         SDL_RenderPresent(renderer);
     }
