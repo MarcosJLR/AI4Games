@@ -6,7 +6,7 @@ namespace aifg
     {
         SteeringOutput result;
 
-        result.linear = target.position - character.position;
+        result.linear = target->position - character->position;
 
         result.linear.normalize();
         result.linear *= maxAcceleration;
@@ -20,7 +20,7 @@ namespace aifg
     {
         SteeringOutput result;
 
-        Vector3 direction = target.position - character.position;
+        Vector3 direction = target->position - character->position;
         double distance = direction.norm();
         Vector3 targetVelocity;
         double targetSpeed;
@@ -37,7 +37,7 @@ namespace aifg
         targetVelocity.normalize();
         targetVelocity *= targetSpeed;
 
-        result.linear = targetVelocity - character.velocity;
+        result.linear = targetVelocity - character->velocity;
         result.linear /= timeToTarget;
 
         if(result.linear.norm() > maxAcceleration){
@@ -53,7 +53,7 @@ namespace aifg
     {
         SteeringOutput result;
 
-        double rotation = minAngularDifference(target.orientation, character.orientation);
+        double rotation = minAngularDifference(target->orientation, character->orientation);
         double rotationSize = abs(rotation);
 
         if(rotationSize < targetRadius)
@@ -68,7 +68,7 @@ namespace aifg
 
         targetRotation *= (rotation < 0 ? -1 : 1);
 
-        result.angular = targetRotation - character.rotation;
+        result.angular = targetRotation - character->rotation;
         result.angular /= timeToTarget;
 
         double angularSize = abs(result.angular);
@@ -85,7 +85,7 @@ namespace aifg
     {
         SteeringOutput result;
 
-        result.linear = target.velocity - character.velocity;
+        result.linear = target->velocity - character->velocity;
         result.linear /= timeToTarget;
 
         if(result.linear.norm() > maxAcceleration){
@@ -99,10 +99,10 @@ namespace aifg
 
     SteeringOutput Pursue::getSteering()
     {
-        Vector3 direction = target.position - character.position;
+        Vector3 direction = target->position - character->position;
         double distance = direction.norm();
 
-        double speed = character.velocity.norm();
+        double speed = character->velocity.norm();
         double prediction;
         
         if(speed <= distance / maxPrediction)
@@ -110,22 +110,22 @@ namespace aifg
         else
             prediction = distance / speed;
 
-        Seek::target.position = target.position + target.velocity * prediction;
+        Seek::target->position = target->position + target->velocity * prediction;
 
         return Seek::getSteering();
     }
 
     SteeringOutput Face::getSteering()
     {
-        Vector3 direction = target.position - character.position;
-        Align::target.orientation = newOrientation(character.orientation, direction);
+        Vector3 direction = target->position - character->position;
+        Align::target->orientation = newOrientation(character->orientation, direction);
 
         return Align::getSteering();
     }
 
     SteeringOutput LookWhereYoureGoing::getSteering()
     {
-        target.orientation = newOrientation(character.orientation, character.velocity);
+        target->orientation = newOrientation(character->orientation, character->velocity);
 
         return Align::getSteering();
     }
@@ -134,9 +134,9 @@ namespace aifg
     {
         wanderOrientation += randomBinomial() * wanderRate;
 
-        target.position = character.position + wanderOffset * (Vector3(character.orientation));
+        target->position = character->position + wanderOffset * (Vector3(character->orientation));
 
-        target.position += wanderRadius * (Vector3(wanderOrientation));
+        target->position += wanderRadius * (Vector3(wanderOrientation));
 
         return Seek::getSteering();
     }
@@ -145,8 +145,8 @@ namespace aifg
     {
         SteeringOutput result;
 
-        for(Kinematic& target : targets){
-            Vector3 direction = target.position - character.position;
+        for(Kinematic* target : targets){
+            Vector3 direction = target->position - character->position;
             double distance = direction.norm();
 
             if(attract)
@@ -174,9 +174,9 @@ namespace aifg
         Vector3 firstRelativeVel;
         bool willCollide = false;
 
-        for(Kinematic& target : targets){
-            Vector3 relativePos = character.position - target.position;
-            Vector3 relativeVel = target.velocity - character.velocity;
+        for(Kinematic* target : targets){
+            Vector3 relativePos = character->position - target->position;
+            Vector3 relativeVel = target->velocity - character->velocity;
             double relativeSpeed = relativeVel.norm();
             double timeToColission = (relativePos * relativeVel) / 
                                      (relativeSpeed * relativeSpeed);
@@ -213,8 +213,8 @@ namespace aifg
 
     SteeringOutput ObstacleAvoidance::getSteering()
     {
-        Vector3 longRay = character.velocity;
-        double orientation = newOrientation(character.orientation, longRay);
+        Vector3 longRay = character->velocity;
+        double orientation = newOrientation(character->orientation, longRay);
 
         longRay.normalize();
         longRay *= longLookahead;
@@ -225,20 +225,20 @@ namespace aifg
         whiskerL *= shortLookahead;
         whiskerR *= shortLookahead;
 
-        Collision* collision = detector.getCollision(character.position, longRay);
+        Collision* collision = detector.getCollision(character->position, longRay);
 
         if(!collision){
-            collision = detector.getCollision(character.position, whiskerL);
+            collision = detector.getCollision(character->position, whiskerL);
             
             if(!collision){
-                collision = detector.getCollision(character.position, whiskerR);
+                collision = detector.getCollision(character->position, whiskerR);
                 
                 if(!collision)
                     return SteeringOutput();
             }
         }
 
-        target.position = collision->position + collision->normal * avoidDistance;
+        target->position = collision->position + collision->normal * avoidDistance;
         return Seek::getSteering();
     }
 
@@ -247,7 +247,7 @@ namespace aifg
         SteeringOutput result;
 
         for(BehaviourAndWeight& b : behaviours)
-            result += b.weight * b.behaviour.getSteering();
+            result += b.weight * b.behaviour->getSteering();
 
         if(result.linear.norm() > maxAcceleration){
             result.linear.normalize();
@@ -263,8 +263,8 @@ namespace aifg
     {
         SteeringOutput result;
 
-        for(BlendedSteering& group : groups){
-            result = group.getSteering();
+        for(BlendedSteering* group : groups){
+            result = group->getSteering();
 
             if(result.linear.norm() > EPS or abs(result.angular) > EPS)
                 return result; 
