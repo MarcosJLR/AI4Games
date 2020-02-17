@@ -46,7 +46,7 @@ namespace aifg
         CollisionDetector() : obstacles() {}
         CollisionDetector(std::vector<Segment>& obstacles) : obstacles(obstacles) {}
 
-        inline void add(Segment& S) { obstacles.push_back(S); }
+        inline void add(Segment S) { obstacles.push_back(S); }
         inline void clear() { obstacles.clear(); }
 
         Collision* getCollision(Vector3& position, Vector3& moveAmount);
