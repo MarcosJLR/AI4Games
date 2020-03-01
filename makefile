@@ -1,7 +1,7 @@
 .PHONY: all clean clear
 
 CC = g++
-CFLAGS = -O2 -Wall -std=c++14 `sdl2-config --cflags --libs`
+CFLAGS = -O2 -Wall -std=c++17 `sdl2-config --cflags --libs`
 LFLAGS = -lSDL2_image
 OBJS = vector3D.o position.o kinematic.o steering.o texture.o collision.o character.o
 
