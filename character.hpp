@@ -3,6 +3,8 @@
 #include "position.hpp"
 #include "steering.hpp"
 #include "texture.hpp"
+#include "graph.hpp" 
+#include "collision.hpp"
 
 namespace aifg
 {
@@ -10,6 +12,7 @@ namespace aifg
     {
         Kinematic kinematic;
         Behaviour* behaviour;
+        CollisionDetector* detector;
         LTexture sprite;
         double maxSpeed;
         double maxRotation;
@@ -30,6 +33,6 @@ namespace aifg
 
     struct RedEnemy : Character
     {
-        void init(const Vector3& pos, Kinematic* player, LTexture& mSprite, std::vector<Kinematic*>& enemies, CollisionDetector& detector);
+        void init(const Vector3& pos, Kinematic* player, LTexture& mSprite, std::vector<Kinematic*>& enemies, CollisionDetector* mDetector);
     };
 };
