@@ -4,11 +4,11 @@ namespace aifg
 {
     bool Node::hasPoint(Vector3 p)
     {
-        bool inAngle102 = (v0.orient(v1, p) <= 0 && v0.orient(p, v2) <= 0) ||
-                          (v0.orient(v1, p) >= 0 && v0.orient(p, v2) >= 0);
+        bool inAngle102 = (v0.orient2D(v1, p) <= 0 && v0.orient2D(p, v2) <= 0) ||
+                          (v0.orient2D(v1, p) >= 0 && v0.orient2D(p, v2) >= 0);
 
-        bool inAngle012 = (v1.orient(v0, p) <= 0 && v1.orient(p, v2) <= 0) ||
-                          (v1.orient(v0, p) >= 0 && v1.orient(p, v2) <= 0);
+        bool inAngle012 = (v1.orient2D(v0, p) <= 0 && v1.orient2D(p, v2) <= 0) ||
+                          (v1.orient2D(v0, p) >= 0 && v1.orient2D(p, v2) <= 0);
 
         return inAngle012 && inAngle102; 
     }
@@ -25,7 +25,7 @@ namespace aifg
         SDL_RenderDrawLine(renderer, x2, y2, x0, y0);
     }
 
-    int Graph::whereAmI(Vector3 pos, int lastNode = -1)
+    int Graph::whereAmI(Vector3 pos, int lastNode)
     {
         if(lastNode != -1){
             std::set<int> visited;
@@ -57,18 +57,19 @@ namespace aifg
 
     std::vector<Vector3> Graph::Astar(int s, int t)
     {
-        priority_queue <std::pair<double, int>> pq;
+        std::priority_queue <std::tuple<double, int, int>> pq;
         std::vector <double> dist(N, INF);
-        std::vector <int> pat(N, -1);
+        std::vector <int> par(N, -1);
         dist[s] = 0.0;
-        pq.push({0.0, s});
+        par[s] = s;
+        pq.push({0.0, s, s});
 
         while(!pq.empty())
         {
-            auto [v, c] = pq.top();
+            auto [c, v, p] = pq.top();
             pq.pop();
 
-            if(c > dist[v]) continue;
+            if(p != par[v]) continue;
             
             for(int u : adjacencyList[v])
             {
@@ -77,7 +78,7 @@ namespace aifg
                 {
                     dist[u] = dist[v] + c;
                     par[u] = v;
-                    pq.push({-dist[u] - cost(u, t), u});
+                    pq.push({-dist[u] - cost(u, t), u, v});
                 }
             }
         }
@@ -90,8 +91,100 @@ namespace aifg
             return result;
         
         result.push_back(nodes[s].getCenter());
-        reverse(result.begin(), result.end());
+        std::reverse(result.begin(), result.end());
         return result;
+    }
+    
+    void Graph::draw(SDL_Renderer* renderer)
+    {
+        for(auto node : nodes)
+            node.draw(renderer);
+    }
+
+    void Graph::init(const std::string& path)
+    {
+        std::ifstream nodeStream;
+        std::ifstream eleStream;
+        std::ifstream neighStream;
+
+        nodeStream.open(path + ".node" );
+        if(!nodeStream.is_open())
+        {
+            std::cerr << "Couldn't open " + path + ".node file!" << std::endl;
+            return;
+        }        
+
+        eleStream.open(path + ".ele");
+        if(!eleStream.is_open())
+        {
+            std::cerr << "Couldn't open " + path + ".ele file!" << std::endl;
+            return;
+        }
+
+        neighStream.open(path + ".neigh");
+        if(!neighStream.is_open())
+        {
+            std::cerr << "Couldn't open " + path + ".ele file!" << std::endl;
+            return;
+        }
+
+        int n, dim, attrNo, boundMarks;
+        std::vector<Vector3> points;
+        nodeStream >> n >> attrNo >> boundMarks;
+        for(int i = 0; i < n; i++)
+        {
+            int id;
+            double x, z, attrIgnore, boundMarkIgnore;
+            
+            nodeStream >> id >> x >> z;
+
+            for(int j = 0; j < attrNo; j++)
+                nodeStream >> attrIgnore;
+
+            for(int j = 0; j < boundMarks; j++)
+                nodeStream >> boundMarkIgnore;
+
+            points.push_back(Vector3(x, 0, z));
+        }
+
+        int ppt;
+        eleStream >> N >> ppt >> attrNo;
+        for(int i = 0; i < N; i++)
+        {
+            int id, v0, v1, v2;
+            double attrIgnore;
+
+            eleStream >> id >> v0 >> v1 >> v2;
+            for(int j = 0; j < attrNo; j++)
+                eleStream >> attrIgnore;
+
+            nodes.push_back(Node(points[v0], points[v1], points[v2]));
+        }
+        
+        int neighN, npt;
+        neighStream >> neighN >> npt;
+        for(int i = 0; i < N; i++)
+        {
+            int id, t;
+            neighStream >> id;
+            id--;
+
+            neighStream >> t;
+            if(t != -1)
+                adjacencyList[id].push_back(t-1);
+
+            neighStream >> t;
+            if(t != -1)
+                adjacencyList[id].push_back(t-1);
+
+            neighStream >> t;
+            if(t != -1)
+                adjacencyList[id].push_back(t-1);
+        }
+
+        nodeStream.close();
+        eleStream.close();
+        neighStream.close();
     }
 
 };

@@ -4,6 +4,10 @@
 #include <vector>
 #include <set>
 #include <queue>
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 #include "vector3D.hpp"
 
@@ -30,10 +34,10 @@ namespace aifg
         int N;
         std::vector<Node> nodes;
         std::vector<std::vector<int>> adjacencyList;
-        const static double INF = 1.0 / 0.0;
+        const double INF = 1.0 / 0.0;
 
     public:
-        void init(const char* filepath);
+        void init(const std::string& path);
         inline double cost(int i, int j)
         {
             return nodes[i].getCenter().distance(nodes[j].getCenter());
