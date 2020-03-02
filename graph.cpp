@@ -15,11 +15,11 @@ namespace aifg
 
     void Node::draw(SDL_Renderer* renderer)
     {
-        int x0 = floor(v0.x), y0 = floor(v0.z);
-        int x1 = floor(v1.x), y1 = floor(v1.z);
-        int x2 = floor(v2.x), y2 = floor(v2.z);
-        
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x00, 0xFF);
+        int x0 = round(v0.x), y0 = round(v0.z);
+        int x1 = round(v1.x), y1 = round(v1.z);
+        int x2 = round(v2.x), y2 = round(v2.z);
+
+        SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0xFF);
         SDL_RenderDrawLine(renderer, x0, y0, x1, y1);
         SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
         SDL_RenderDrawLine(renderer, x2, y2, x0, y0);
@@ -130,7 +130,7 @@ namespace aifg
 
         int n, dim, attrNo, boundMarks;
         std::vector<Vector3> points;
-        nodeStream >> n >> attrNo >> boundMarks;
+        nodeStream >> n >> dim >> attrNo >> boundMarks;
         for(int i = 0; i < n; i++)
         {
             int id;
@@ -147,6 +147,8 @@ namespace aifg
             points.push_back(Vector3(x, 0, z));
         }
 
+        std::cout << "Node file loaded correctly" << std::endl;
+
         int ppt;
         eleStream >> N >> ppt >> attrNo;
         for(int i = 0; i < N; i++)
@@ -158,9 +160,14 @@ namespace aifg
             for(int j = 0; j < attrNo; j++)
                 eleStream >> attrIgnore;
 
-            nodes.push_back(Node(points[v0], points[v1], points[v2]));
+            nodes.push_back(Node(points[v0-1], points[v1-1], points[v2-1]));
+
         }
+
+        std::cout << "Element file loaded correctly" << std::endl;
         
+        adjacencyList = std::vector<std::vector<int>>(N);
+
         int neighN, npt;
         neighStream >> neighN >> npt;
         for(int i = 0; i < N; i++)
@@ -181,6 +188,8 @@ namespace aifg
             if(t != -1)
                 adjacencyList[id].push_back(t-1);
         }
+
+        std::cout << "Neighbours file loaded correctly" << std::endl;
 
         nodeStream.close();
         eleStream.close();
