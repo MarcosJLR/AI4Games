@@ -3,7 +3,7 @@
 CC = g++
 CFLAGS = -O2 -Wall -std=c++17 `sdl2-config --cflags --libs`
 LFLAGS = -lSDL2_image
-OBJS = vector3D.o position.o kinematic.o steering.o texture.o collision.o character.o
+OBJS = vector3D.o position.o kinematic.o steering.o texture.o collision.o character.o graph.o 
 
 all: aifg clean
 
@@ -28,12 +28,15 @@ texture.o: texture.cpp texture.hpp
 collision.o: collision.cpp collision.hpp vector3D.o 
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-character.o: character.cpp character.hpp position.o texture.o steering.o
+character.o: character.cpp character.hpp position.o texture.o steering.o graph.o collision.o 
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
 game.o: game.cpp game.hpp $(OBJS)
 	$(CC) $(CFLAGS) -c -o $@ $< 
 
+graph.o: graph.cpp graph.hpp vector3D.o 
+	$(CC) $(CFLAGS) -c -o $@ $<
+	
 clean:
 	rm *.o
 
