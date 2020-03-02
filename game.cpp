@@ -60,7 +60,7 @@ namespace aifg
 
         for(int i = 100; i < 1200; i += 100){
             enemies.push_back(new RedEnemy());
-            enemies.back()->init({ (double) i, 0, 400}, &player.kinematic, enemyTexture, enemiesKin, detector);
+            enemies.back()->init({ (double) i, 0, 400}, &player.kinematic, enemyTexture, enemiesKin, &detector);
         }
 
         isRunning = true;
