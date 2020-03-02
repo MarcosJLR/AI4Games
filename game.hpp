@@ -7,6 +7,7 @@
 #include "steering.hpp"
 #include "texture.hpp"
 #include "character.hpp"
+#include "graph.hpp"
 
 namespace aifg
 {
@@ -33,5 +34,6 @@ namespace aifg
         std::vector<Kinematic*> enemiesKin;
 
         CollisionDetector detector;
+        Graph graph;
     };
 };

@@ -51,6 +51,8 @@ namespace aifg
             return;
         }
 
+        graph.init("maps/Map.1");
+
         detector.add(Segment({0,0,960}, {0,0,0}));
         detector.add(Segment({1280,0,960}, {0,0,960}));
         detector.add(Segment({1280,0,0}, {1280,0,960}));
@@ -137,6 +139,8 @@ namespace aifg
     {
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
         SDL_RenderClear(renderer);
+
+        graph.draw(renderer);
 
         player.draw(renderer);
 
