@@ -4,13 +4,10 @@ namespace aifg
 {
     bool Node::hasPoint(Vector3 p)
     {
-        bool inAngle102 = (v0.orient2D(v1, p) <= 0 && v0.orient2D(p, v2) <= 0) ||
-                          (v0.orient2D(v1, p) >= 0 && v0.orient2D(p, v2) >= 0);
+        double A = abs(v0.orient2D(v1,v2));
+        double B = abs(p.orient2D(v0,v1)) + abs(p.orient2D(v0,v2)) + abs(p.orient2D(v1,v2));
 
-        bool inAngle012 = (v1.orient2D(v0, p) <= 0 && v1.orient2D(p, v2) <= 0) ||
-                          (v1.orient2D(v0, p) >= 0 && v1.orient2D(p, v2) <= 0);
-
-        return inAngle012 && inAngle102; 
+        return abs(A - B) < 0.01;
     }
 
     void Node::draw(SDL_Renderer* renderer)
