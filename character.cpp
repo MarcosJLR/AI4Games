@@ -49,4 +49,17 @@ namespace aifg
 
         enemies.push_back(&kinematic);
     }
+
+    void RedEnemy2::init(const Vector3& pos, Kinematic* player, LTexture& mSprite, Graph* graph)
+    {
+        kinematic.position = pos;
+        maxSpeed = 0.25;
+        maxRotation = (0.5 * M_PI) / 360;
+        behaviour = new BlendedSteering(maxAcceleration, maxAngular);
+        sprite = mSprite;
+        detector = NULL;
+        BlendedSteering* blendBehaviour = (BlendedSteering*) behaviour;
+        blendBehaviour->addBehaviour(new LookWhereYoureGoing(&kinematic, maxAngular, maxRotation), 1);
+        blendBehaviour->addBehaviour(new PathFindingSeek(&kinematic, player, maxAcceleration, graph), 1);
+    }
 };

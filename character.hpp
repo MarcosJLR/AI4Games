@@ -35,4 +35,9 @@ namespace aifg
     {
         void init(const Vector3& pos, Kinematic* player, LTexture& mSprite, std::vector<Kinematic*>& enemies, CollisionDetector* mDetector);
     };
+
+    struct RedEnemy2 : Character
+    {
+        void init(const Vector3& pos, Kinematic* player, LTexture& mSprite, Graph* graph);
+    };
 };
