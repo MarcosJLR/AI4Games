@@ -272,4 +272,39 @@ namespace aifg
 
         return result;
     }
+
+    SteeringOutput PathFindingSeek::getSteering()
+    {
+        SteeringOutput result;
+
+        if(character->position.distance(target->position) < 32)
+            return result;
+
+        int newCharacterNode = graph->whereAmI(character->position, characterNode);
+        int newTargetNode = graph->whereAmI(target->position, targetNode);
+
+        if(targetNode == newTargetNode)
+        {
+            Seek::target->position = path.empty() ? target->position : path.back();
+        }
+        else
+        {
+            path.clear();
+            path = graph->Astar(newCharacterNode, newTargetNode);
+            reverse(path.begin(), path.end());
+
+            if(path.empty())
+                return result;
+
+            Seek::target->position = path.back();
+        }
+
+        characterNode = newCharacterNode;
+        targetNode = newTargetNode;
+
+        while(!path.empty() && character->position.distance(path.back()) < 32) 
+            path.pop_back();
+
+        return Seek::getSteering();
+    }
 }

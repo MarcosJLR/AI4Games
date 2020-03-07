@@ -3,9 +3,12 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <iostream>
+
 #include "vector3D.hpp"
 #include "position.hpp"
 #include "collision.hpp"
+#include "graph.hpp"
 
 namespace aifg
 {
@@ -248,5 +251,24 @@ namespace aifg
         }
 
         SteeringOutput getSteering();  
+    };
+
+    struct PathFindingSeek : Seek
+    {
+        Graph* graph;
+        Kinematic* target;
+        int characterNode;
+        int targetNode;
+        std::vector<Vector3> path;
+
+        PathFindingSeek() 
+            : Seek(), graph(NULL), characterNode(0), targetNode(0), path() 
+        {}
+        PathFindingSeek(Kinematic* character, Kinematic* target, double maxAcc, Graph* graph)
+            : Seek(character, new Kinematic(), maxAcc), graph(graph), target(target), 
+              characterNode(-1), targetNode(-1), path()
+        {}
+
+        SteeringOutput getSteering();
     };
 };
