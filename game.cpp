@@ -58,12 +58,15 @@ namespace aifg
         detector.add(Segment({1280,0,0}, {1280,0,960}));
         detector.add(Segment({0,0,0}, {1280,0,0}));
 
-        player.init({0, 0, 0}, playerTexture);
+        player.init({960, 0, 512}, playerTexture);
 
-        for(int i = 100; i < 1200; i += 100){
-            enemies.push_back(new RedEnemy());
-            enemies.back()->init({ (double) i, 0, 400}, &player.kinematic, enemyTexture, enemiesKin, &detector);
-        }
+//        for(int i = 100; i < 1200; i += 100){
+//            enemies.push_back(new RedEnemy());
+//            enemies.back()->init({ (double) i, 0, 400}, &player.kinematic, enemyTexture, enemiesKin, &detector);
+//        }
+
+        enemy2.init({512, 0, 512}, &player.kinematic, enemyTexture, &graph);
+        
 
         isRunning = true;
     } 
@@ -131,8 +134,10 @@ namespace aifg
 
         player.update(deltaTime);
         
-        for(RedEnemy* enemy : enemies)
-            enemy->update(deltaTime);
+//        for(RedEnemy* enemy : enemies)
+//            enemy->update(deltaTime);
+
+        enemy2.update(deltaTime);
     }
 
     void Game::render()
@@ -144,8 +149,18 @@ namespace aifg
 
         player.draw(renderer);
 
-        for(RedEnemy* enemy : enemies)
-            enemy->draw(renderer);
+//        for(RedEnemy* enemy : enemies)
+//            enemy->draw(renderer);
+
+        enemy2.draw(renderer);
+
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        BlendedSteering* bb = (BlendedSteering*) enemy2.behaviour;
+        PathFindingSeek* b = (PathFindingSeek*) bb->behaviours[1].behaviour;
+
+        for(int i = 0; i + 1 < (int) (b->path.size()); i++){
+            SDL_RenderDrawLine(renderer, round(b->path[i].x), round(b->path[i].z), round(b->path[i+1].x), round(b->path[i+1].z));
+        }
 
         SDL_RenderPresent(renderer);
     }

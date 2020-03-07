@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
+#include <iostream>
 
 #include "position.hpp"
 #include "kinematic.hpp"
@@ -32,6 +33,7 @@ namespace aifg
         Player player;
         std::vector<RedEnemy*> enemies;
         std::vector<Kinematic*> enemiesKin;
+        RedEnemy2 enemy2;
 
         CollisionDetector detector;
         Graph graph;
