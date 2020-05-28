@@ -49,7 +49,7 @@ namespace aifg
             if(nodes[i].hasPoint(pos))
                 return i;
         }
-        return -1;
+        return lastNode;
     }
 
     std::vector<Vector3> Graph::Astar(int s, int t)
